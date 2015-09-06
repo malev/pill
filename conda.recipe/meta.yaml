@@ -1,0 +1,9 @@
+package:
+  name: pill
+  version: "0.1.0"
+
+source:
+  path: ../
+
+about:
+  home: https://github.com/malev/pill
