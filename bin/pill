@@ -13,9 +13,9 @@ SYNOPSIS
 USAGE
     Create and run temporal/local kapsels.
 
-      $ kap init
-      $ source kap in
-      $ source kap out
+      $ pill init
+      $ source pill in
+      $ source pill out
 
 COMMANDS
     init    Creates the .kapsel directory
@@ -50,8 +50,8 @@ case "$1" in
     mkdir .kapsel;;
   "in")
     # Should be sourced
-    if [[ -n $BASH_VERSION ]] && [[ "$(basename "$0" 2> /dev/null)" == "kap" ]]; then
-      >&2 echo "Error: 'kap in/out' must been sourced. Run 'source kap in/out' instead."
+    if [[ -n $BASH_VERSION ]] && [[ "$(basename "$0" 2> /dev/null)" == "pill" ]]; then
+      >&2 echo "Error: 'pill in' must been sourced. Run 'source pill in' instead."
       exit 1
     fi
 
@@ -87,8 +87,8 @@ case "$1" in
     ;;
   "out")
     # Should be sourced
-    if [[ -n $BASH_VERSION ]] && [[ "$(basename "$0" 2> /dev/null)" == "kap" ]]; then
-      >&2 echo "Error: 'kap in/out' must been sourced. Run 'source kap in/out' instead."
+    if [[ -n $BASH_VERSION ]] && [[ "$(basename "$0" 2> /dev/null)" == "pill" ]]; then
+      >&2 echo "Error: 'pill out' must been sourced. Run 'source pill out' instead."
       exit 1
     fi
 
