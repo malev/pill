@@ -1,0 +1,117 @@
+#!/bin/bash
+
+usage() {
+cat << EOF
+usage: kap [COMMAND]
+
+SYNOPSIS
+    Create a local kapsel, conda-environment and python environment
+    in the current directory. When activated all the libraries will
+    be installed and imported from the `.kapsel` directory in the
+    root of your project.
+
+USAGE
+    Create and run temporal/local kapsels.
+
+      $ kap init
+      $ source kap in
+      $ source kap out
+
+COMMANDS
+    init    Creates the .kapsel directory
+    in      Modifies KAPSEL_PREFIX, CONDA_DEFAULT_ENV and PATH to use
+            the .kapsel directory and sets the KAPSEL_NAME variable.
+    out     Restores the previous CONDA_DEFAULT_ENV and PATH. Also
+            unsets KAPSEL_PREFIX and KAPSEL_NAME.
+EOF
+}
+
+backup() {
+  KAPSEL_OLD_PS1=$PS1
+  KAPSEL_OLD_PATH=$PATH
+
+  export KAPSEL_OLD_PS1 KAPSEL_OLD_PATH
+}
+
+remove_current_conda() {
+  PATH=:$PATH:
+  PATH=${PATH//:$CONDA_DEFAULT_ENV:/:}
+  PATH=${PATH#:}; PATH=${PATH%:}
+}
+
+# When called without arguments, show usage
+if [[ "$1" != "in" && "$#" -ne 1 ]]; then
+  usage
+  exit
+fi
+
+case "$1" in
+  "init")
+    mkdir .kapsel;;
+  "in")
+    # Should be sourced
+    if [[ -n $BASH_VERSION ]] && [[ "$(basename "$0" 2> /dev/null)" == "kap" ]]; then
+      >&2 echo "Error: 'kap in/out' must been sourced. Run 'source kap in/out' instead."
+      exit 1
+    fi
+
+    # '.kapsel' should exist
+    KAPSEL_PREFIX="$(pwd)/.kapsel"
+    if ! [[ -d "$KAPSEL_PREFIX" ]]; then
+      echo "Directory .kapsel not found. Run 'kap init' first."
+      return 1
+    fi
+
+    # It should not be already kapseled
+    if ! [[ -z "$KAPSEL_NAME" ]]
+    then
+      echo "You already have a kapsel activated. Run 'source kap out' first."
+      return 1
+    fi
+
+    # Operations
+    KAPSEL_NAME=$(pwd | sed -E "s/^.*\/(.*)$/\\1/")
+    backup
+
+    echo "Update PATH"
+    remove_current_conda
+    PATH="$KAPSEL_PREFIX/bin:$PATH"
+
+    echo "Update prompt"
+    PS1="($KAPSEL_NAME)$PS1"
+
+    echo "Update env variables"
+    CONDA_DEFAULT_ENV="$KAPSEL_PREFIX"
+    export KAPSEL_NAME KAPSEL_PREFIX CONDA_DEFAULT_ENV
+    return
+    ;;
+  "out")
+    # Should be sourced
+    if [[ -n $BASH_VERSION ]] && [[ "$(basename "$0" 2> /dev/null)" == "kap" ]]; then
+      >&2 echo "Error: 'kap in/out' must been sourced. Run 'source kap in/out' instead."
+      exit 1
+    fi
+
+    # It should be already kapseled
+    if [[ -z "$KAPSEL_NAME" ]]
+    then
+      echo "You don't have a kapsel activated."
+      return 1
+    fi
+
+    echo "Restore path"
+    remove_current_conda
+
+    echo "Restore prompt"
+    PS1="$KAPSEL_OLD_PS1"
+
+    echo "Restore env variables"
+    unset CONDA_DEFAULT_ENV KAPSEL_NAME KAPSEL_PREFIX KAPSEL_OLD_PATH
+    unset KAPSEL_OLD_PS1 KAPSEL_OLD_CONDA_DEFAULT_ENV
+    return
+    ;;
+  *)
+  usage
+  exit
+  ;;
+esac
