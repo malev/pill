@@ -27,7 +27,7 @@ usage: pill [COMMAND]
 SYNOPSIS
     Create a local kapsel, conda-environment and python environment
     in the current directory. When activated all the libraries will
-    be installed and imported from the `.kapsel` directory in the
+    be installed and imported from the '.kapsel' directory in the
     root of your project.
 
 USAGE
@@ -47,13 +47,11 @@ COMMANDS
 
 ## Recommendations
 
-After you create your new environment you should install `python` and
-you might need to run `rehash`:
+After you create your new environment you should install `python`.
 
 ```
 $ pill init
 $ source pill in
-$ rehash
 $ conda install -y python=3.4
 ```
 

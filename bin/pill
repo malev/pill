@@ -2,12 +2,12 @@
 
 usage() {
 cat << EOF
-usage: kap [COMMAND]
+usage: pill [COMMAND]
 
 SYNOPSIS
     Create a local kapsel, conda-environment and python environment
     in the current directory. When activated all the libraries will
-    be installed and imported from the `.kapsel` directory in the
+    be installed and imported from the '.kapsel' directory in the
     root of your project.
 
 USAGE
