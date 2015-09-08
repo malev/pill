@@ -116,7 +116,7 @@ case "$1" in
     fi
 
     echo "Restore path"
-    remove_current_conda
+    PATH="$KAPSEL_OLD_PATH"
 
     echo "Restore prompt"
     PS1="$KAPSEL_OLD_PS1"
