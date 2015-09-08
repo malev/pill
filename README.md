@@ -11,7 +11,7 @@ Minimalistic conda environments.
 
 ## Description
 
-It will create a `.kapsel` directory in the current path. It
+It will create a `.pill` directory in the current path. It
 will update environmental variables so that your conda packages
 will now be installed in your new local environment.
 
@@ -25,24 +25,23 @@ will now be installed in your new local environment.
 usage: pill [COMMAND]
 
 SYNOPSIS
-    Create a local kapsel, conda-environment and python environment
-    in the current directory. When activated all the libraries will
-    be installed and imported from the '.kapsel' directory in the
-    root of your project.
+    Create a local python and conda environment in the current directory.
+    When activated all the libraries will be installed and imported from
+    the '.pill' directory in the root of your project.
 
 USAGE
-    Create and run temporal/local kapsels.
+    Create and run temporal/local environments.
 
       $ pill init
       $ source pill in
       $ source pill out
 
 COMMANDS
-    init    Creates the .kapsel directory
-    in      Modifies KAPSEL_PREFIX, CONDA_DEFAULT_ENV and PATH to use
-            the .kapsel directory and sets the KAPSEL_NAME variable.
+    init    Creates the .pill directory and create links.
+    in      Modifies CONDA_DEFAULT_ENV and PATH to use
+            the .pill directory and sets the PILL_NAME variable.
     out     Restores the previous CONDA_DEFAULT_ENV and PATH. Also
-            unsets KAPSEL_PREFIX and KAPSEL_NAME.
+            unsets PILL_NAME.
 ```
 
 ## Recommendations
@@ -61,4 +60,4 @@ python 3.
 ## Inspiration
 
 This software is based in [gst](https://github.com/tonchis/gst) and
-[gs](https://github.com/soveran/gs). Minimalistic gemsets for ruby.
+[gs](https://github.com/soveran/gs). Minimalistic **gemsets** for ruby.

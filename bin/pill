@@ -5,32 +5,32 @@ cat << EOF
 usage: pill [COMMAND]
 
 SYNOPSIS
-    Create a local kapsel, conda-environment and python environment
-    in the current directory. When activated all the libraries will
-    be installed and imported from the '.kapsel' directory in the
-    root of your project.
+    Create a local python and conda environment in the current directory.
+    When activated all the libraries will be installed and imported from
+    the '.pill' directory in the root of your project.
 
 USAGE
-    Create and run temporal/local kapsels.
+    Create and run temporal/local environments.
 
       $ pill init
       $ source pill in
       $ source pill out
 
 COMMANDS
-    init    Creates the .kapsel directory
-    in      Modifies KAPSEL_PREFIX, CONDA_DEFAULT_ENV and PATH to use
-            the .kapsel directory and sets the KAPSEL_NAME variable.
+    init    Creates the .pill directory and create links.
+    in      Modifies CONDA_DEFAULT_ENV and PATH to use
+            the .pill directory and sets the PILL_NAME variable.
     out     Restores the previous CONDA_DEFAULT_ENV and PATH. Also
-            unsets KAPSEL_PREFIX and KAPSEL_NAME.
+            unsets PILL_NAME.
 EOF
 }
 
 backup() {
-  KAPSEL_OLD_PS1=$PS1
-  KAPSEL_OLD_PATH=$PATH
+  PILL_OLD_PS1=$PS1
+  PILL_OLD_PATH=$PATH
+  PILL_OLD_CONDA_DEFAULT_ENV=$CONDA_DEFAULT_ENV
 
-  export KAPSEL_OLD_PS1 KAPSEL_OLD_PATH
+  export PILL_OLD_PATH PILL_OLD_PS1 PILL_OLD_CONDA_DEFAULT_ENV
 }
 
 remove_current_conda() {
@@ -44,7 +44,7 @@ create_symlinks() {
   declare -a LINKS=(activate conda deactivate pill)
   for VAR in "${LINKS[@]}"
   do
-    ln -s "$CONDA_BIN_PATH/$VAR" "$KAPSEL_PREFIX/bin/$VAR"
+    ln -s "$CONDA_BIN_PATH/$VAR" "$CONDA_DEFAULT_ENV/bin/$VAR"
   done
   unset LINKS
 }
@@ -57,12 +57,12 @@ fi
 
 case "$1" in
   "init")
-    mkdir -p .kapsel/bin
-    KAPSEL_PREFIX="$(pwd)/.kapsel"
+    mkdir -p .pill/bin
+    CONDA_DEFAULT_ENV="$(pwd)/.pill"
     CONDA_BIN_PATH="$(conda info --root)/bin"
     create_symlinks
 
-    unset KAPSEL_PREFIX CONDA_BIN_PATH
+    unset CONDA_DEFAULT_ENV CONDA_BIN_PATH
     ;;
   "in")
     # Should be sourced
@@ -71,34 +71,26 @@ case "$1" in
       exit 1
     fi
 
-    # '.kapsel' should exist
-    KAPSEL_PREFIX="$(pwd)/.kapsel"
-    if ! [[ -d "$KAPSEL_PREFIX" ]]; then
-      echo "Directory .kapsel not found. Run 'kap init' first."
-      return 1
-    fi
-
-    # It should not be already kapseled
-    if ! [[ -z "$KAPSEL_NAME" ]]
-    then
-      echo "You already have a kapsel activated. Run 'source kap out' first."
+    # '.pill' should exist
+    CONDA_DEFAULT_ENV="$(pwd)/.pill"
+    if ! [[ -d "$CONDA_DEFAULT_ENV" ]]; then
+      echo "Directory .pill not found. Run 'pill init' first."
       return 1
     fi
 
     # Operations
-    KAPSEL_NAME=$(pwd | sed -E "s/^.*\/(.*)$/\\1/")
+    PILL_NAME=$(pwd | sed -E "s/^.*\/(.*)$/\\1/")
     backup
 
     echo "Update PATH"
     remove_current_conda
-    PATH="$KAPSEL_PREFIX/bin:$PATH"
+    PATH="$CONDA_DEFAULT_ENV/bin:$PATH"
 
     echo "Update prompt"
-    PS1="($KAPSEL_NAME)$PS1"
+    PS1="($PILL_NAME)$PS1"
 
     echo "Update env variables"
-    CONDA_DEFAULT_ENV="$KAPSEL_PREFIX"
-    export KAPSEL_NAME KAPSEL_PREFIX CONDA_DEFAULT_ENV
+    export CONDA_DEFAULT_ENV PILL_NAME
     return
     ;;
   "out")
@@ -109,21 +101,20 @@ case "$1" in
     fi
 
     # It should be already kapseled
-    if [[ -z "$KAPSEL_NAME" ]]
+    if [[ -z "$PILL_NAME" ]]
     then
-      echo "You don't have a kapsel activated."
+      echo "You don't have a pill activated."
       return 1
     fi
 
     echo "Restore path"
-    PATH="$KAPSEL_OLD_PATH"
+    PATH="$PILL_OLD_PATH"
 
     echo "Restore prompt"
-    PS1="$KAPSEL_OLD_PS1"
+    PS1="$PILL_OLD_PS1"
 
     echo "Restore env variables"
-    unset CONDA_DEFAULT_ENV KAPSEL_NAME KAPSEL_PREFIX KAPSEL_OLD_PATH
-    unset KAPSEL_OLD_PS1 KAPSEL_OLD_CONDA_DEFAULT_ENV
+    unset CONDA_DEFAULT_ENV PILL_NAME PILL_OLD_PS1 PILL_OLD_PATH PILL_OLD_CONDA_DEFAULT_ENV
     return
     ;;
   *)
