@@ -34,9 +34,19 @@ backup() {
 }
 
 remove_current_conda() {
+  CONDA_BIN_PATH="$(conda info --root)/bin"
   PATH=:$PATH:
-  PATH=${PATH//:$CONDA_DEFAULT_ENV:/:}
+  PATH=${PATH//:$CONDA_BIN_PATH:/:}
   PATH=${PATH#:}; PATH=${PATH%:}
+}
+
+create_symlinks() {
+  declare -a LINKS=(activate conda deactivate pill)
+  for VAR in "${LINKS[@]}"
+  do
+    ln -s "$CONDA_BIN_PATH/$VAR" "$KAPSEL_PREFIX/bin/$VAR"
+  done
+  unset LINKS
 }
 
 # When called without arguments, show usage
@@ -47,7 +57,13 @@ fi
 
 case "$1" in
   "init")
-    mkdir .kapsel;;
+    mkdir -p .kapsel/bin
+    KAPSEL_PREFIX="$(pwd)/.kapsel"
+    CONDA_BIN_PATH="$(conda info --root)/bin"
+    create_symlinks
+
+    unset KAPSEL_PREFIX CONDA_BIN_PATH
+    ;;
   "in")
     # Should be sourced
     if [[ -n $BASH_VERSION ]] && [[ "$(basename "$0" 2> /dev/null)" == "pill" ]]; then
