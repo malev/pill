@@ -1,0 +1,13 @@
+package: pill
+user: malev
+
+platform:
+  - linux-32
+  - linux-64
+  - osx-64
+
+engine:
+  - python=2
+  - python=3.3
+  - python=3.4
+
