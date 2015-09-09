@@ -10,3 +10,13 @@ engine:
   - python=2.7
   - python=3.4
 
+target:
+  - conda
+
+script:
+  - conda install pill -c malev -y
+  - pill
+  - pill init
+  - source pill in
+  - source pill out
+
