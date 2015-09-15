@@ -11,10 +11,6 @@ engine:
   - python=3.4
 
 script:
-  - conda install pill -c malev -y
-  - pill
-  - pill init
-  - source pill in
-  - source pill out
+  - conda build --no-test ./conda.recipe/
 
 build_targets: conda
