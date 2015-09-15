@@ -33,11 +33,13 @@ USAGE
     Create and run temporal/local environments.
 
       $ pill init
+      $ pill run python your-script.py
       $ source pill in
       $ source pill out
 
 COMMANDS
     init    Creates the .pill directory and create links.
+    run     Run a script in the context of the local pill.
     in      Modifies CONDA_DEFAULT_ENV and PATH to use
             the .pill directory and sets the PILL_NAME variable.
     out     Restores the previous CONDA_DEFAULT_ENV and PATH. Also
