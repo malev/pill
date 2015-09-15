@@ -51,12 +51,6 @@ create_symlinks() {
   unset LINKS
 }
 
-# When called without arguments, show usage
-if [[ "$1" != "in" && "$#" -ne 1 ]]; then
-  usage
-  exit
-fi
-
 case "$1" in
   "init")
     mkdir -p .pill/bin
@@ -120,13 +114,14 @@ case "$1" in
     return
     ;;
   "run")
-    remove_current_conda
     CONDA_DEFAULT_ENV="$(pwd)/.pill"
     PATH="$CONDA_DEFAULT_ENV/bin:$PATH"
+
     exec "${@:2}"
-  ;;
+    exit
+    ;;
   *)
-  usage
-  exit
-  ;;
+    usage
+    exit
+    ;;
 esac
