@@ -17,7 +17,7 @@ will now be installed in your new local environment.
 
 # Installation
 
-`conda install pill -y -c malev`
+`conda install pill -y -c malev -r root`
 
 ## Usage
 
